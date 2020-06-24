@@ -6,22 +6,24 @@ import { URL_SERVICIOS } from '../../config/config';
 import Swal from 'sweetalert2';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { SubirArchivoService } from '../subirArchivo/subir-archivo.service';
 
 @Injectable()
 export class UsuarioService {
 
-  Usuario: Usuario;
+  usuario: Usuario;
   token: string;
 
   constructor(
     public http: HttpClient,
-    private router: Router) {
+    private router: Router,
+    private subirArchivoService: SubirArchivoService) {
     console.log('Usuario listo');
     this.cargarStorage();
   }
 
   logout(){
-    this.Usuario = null;
+    this.usuario = null;
     this.token = '';
 
     localStorage.removeItem('token');
@@ -35,9 +37,9 @@ export class UsuarioService {
     if (localStorage.getItem('token')) {
 
       this.token = localStorage.getItem('token');
-      this.Usuario = JSON.parse(localStorage.getItem('usuario'));
+      this.usuario = JSON.parse(localStorage.getItem('usuario'));
     } else {
-      this.Usuario = null;
+      this.usuario = null;
       this.token = '';
     }
 
@@ -52,7 +54,7 @@ export class UsuarioService {
     localStorage.setItem('token', token);
     localStorage.setItem('usuario', JSON.stringify(usuario));
 
-    this.Usuario = usuario;
+    this.usuario = usuario;
     this.token = token;
   }
 
@@ -103,5 +105,49 @@ export class UsuarioService {
           return resp.usuario;
         })
       );
+  }
+
+  actualizarUsuario( usuario: Usuario) {
+
+    const url = URL_SERVICIOS + '/usuario/' + usuario._id
+    + '?token=' + this.token;
+    return this.http.put(url, usuario)
+    .pipe(
+      map( (resp: any) => {
+
+        this.guardarStorage(resp.usuario._id, this.token, resp.usuario);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Usuario actualizado',
+          text: usuario.nombre
+        });
+
+        return true;
+
+      })
+    );
+
+  }
+
+
+  cambiarImagen( file: File, id: string ) {
+
+    this.subirArchivoService.subirArchivo( file, 'usuarios', id)
+      .then( (resp: any) => {
+        this.usuario.img = resp.usuario.img;
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Imagen actualizada',
+          text: this.usuario.nombre
+        });
+
+        this.guardarStorage( id, this.token, this.usuario);
+
+      })
+      .catch( resp => {
+        console.error(resp);
+      })
   }
 }
