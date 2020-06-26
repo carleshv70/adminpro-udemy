@@ -10,6 +10,7 @@ import { RegisterComponent } from './login/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ServiceModule } from './services/service.module';
 
+
 @NgModule({
   declarations: [
     AppComponent,
