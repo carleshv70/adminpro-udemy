@@ -48,7 +48,7 @@ export class ModalUploadComponent implements OnInit {
   }
 
   subirImagen() {
-    this.subirArchivoService.subirArchivo( 
+    this.subirArchivoService.subirArchivo(
       this.imagenSubir,
       this.modalUploadService.tipo,
       this.modalUploadService.id
@@ -59,7 +59,7 @@ export class ModalUploadComponent implements OnInit {
       })
       .catch( err => {
         console.error('Error en la carga', err);
-      })
+      });
   }
 
   ocultarModal() {

@@ -26,8 +26,7 @@ export class UsuariosComponent implements OnInit {
     this.cargarUsuarios();
     this.modalUploadService.notificacion
       .subscribe( (resp: any) => {
-        console.log('resp');
-        this.cargarUsuarios()
+        this.cargarUsuarios();
       });
   }
 
@@ -39,7 +38,6 @@ export class UsuariosComponent implements OnInit {
     this.cargando = true;
     this.usuarioService.cargarUsuarios(this.desde)
       .subscribe((resp: any) => {
-        console.log(resp);
         this.totalRegistros = resp.total;
         this.usuarios = resp.usuarios;
         this.cargando = false;
@@ -104,7 +102,6 @@ export class UsuariosComponent implements OnInit {
         this.usuarioService.borrarUsuario( usuario._id)
           .subscribe( borrado => {
 
-            console.log('borrado', borrado);
             this.desde = 0;
             this.cargarUsuarios();
 
