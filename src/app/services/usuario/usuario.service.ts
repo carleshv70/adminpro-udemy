@@ -45,6 +45,30 @@ export class UsuarioService {
     this.cargarStorage();
   }
 
+  renuevaToken() {
+    const url = URL_SERVICIOS + '/login/renuevatoken?token=' + this.token;
+
+    console.log('token renovado');
+
+    return this.http.get(url)
+      .pipe(
+        map( (resp: any) => {
+          this.guardarStorage(this.usuario._id, resp.token, this.usuario, this.menu);
+          return true;
+        }),
+        catchError(err => {
+          this.router.navigate(['/logout']);
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Renovación del token incorrecta',
+            text: 'No ha sido posible renovar el token'
+          });
+          return throwError(err);
+        })
+      );
+  }
+
   logout(){
     this.usuario = null;
     this.token = '';
